@@ -1,4 +1,4 @@
-# KYC-CHECK <img src="public/kyc-icon.png" align="right" width="102"/>
+# KYC-CHECK <img src="packages/web/public/kyc-icon.png" align="right" width="102"/>
 
 A facial validation service for KYC (Know Your Customer) processes that compares two face images to determine if they belong to the same person.
 
@@ -9,6 +9,7 @@ You can use documents such as a driver's license to verify if it matches the pho
   - [📋 Table of Contents](#-table-of-contents)
   - [✨ Features](#-features)
   - [📚 Articles](#-articles)
+  - [🏗️ Architecture](#️-architecture)
   - [🚀 Installation](#-installation)
   - [⚙️ Environment Setup](#️-environment-setup)
   - [💻 Usage](#-usage)
@@ -24,6 +25,9 @@ You can use documents such as a driver's license to verify if it matches the pho
     - [User Interface Language](#user-interface-language)
     - [API Language Support](#api-language-support)
   - [📁 Project Structure](#-project-structure)
+  - [🚢 Deployment](#-deployment)
+    - [Docker](#docker)
+    - [Kubernetes](#kubernetes)
   - [🙏 Credits](#-credits)
   - [🤝 Contributing](#-contributing)
 
@@ -33,14 +37,25 @@ You can use documents such as a driver's license to verify if it matches the pho
 - ✅ Real-time image preview
 - ✅ Face similarity comparison
 - ✅ Percentage-based similarity score
-- ✅ Simple and intuitive user interface
+- ✅ Modern user interface with theme switching
 - ✅ REST API for integration with other systems
 - ✅ Internationalization (Portuguese & English)
+- ✅ Monorepo architecture with separate packages
+- ✅ Next.js frontend with TypeScript
+- ✅ Docker and Kubernetes support
 
 ## 📚 Articles
 
 - [Basic KYC Implementation Guide using KYC_CHECK](https://dev.to/juninhopo/basic-kyc-implementation-guide-using-kyccheck-3fld) - A practical guide on how to implement and use the KYC_CHECK library in your projects.
 
+## 🏗️ Architecture
+
+KYC-CHECK is structured as a monorepo using pnpm workspaces, consisting of two main packages:
+
+- **API**: Backend service for face detection and comparison
+- **Web**: Next.js frontend application with TypeScript and Tailwind CSS
+
+This architecture allows independent development and deployment of each package while maintaining a unified codebase.
 
 ## 🚀 Installation
 
@@ -68,13 +83,17 @@ API_THRESHOLD=0.50
 ## 💻 Usage
 
 ```bash
-
-# OR start only the development server (without Tailwind watching)
+# Start development environment for both packages
 pnpm dev
+
+# Start only the API development server
+pnpm --filter api dev
+
+# Start only the Web development server
+pnpm --filter web dev
 
 # Build for production
 pnpm build
-pnpm build:css
 
 # Start production server
 pnpm start
@@ -88,13 +107,13 @@ This project uses Tailwind CSS for styling. Here are the available commands for 
 
 ```bash
 # Build Tailwind CSS once
-pnpm build:css
+pnpm --filter web build:css
 
 # Watch for changes and rebuild Tailwind CSS automatically
-pnpm watch:css
+pnpm --filter web watch:css
 
-# Start development server with Tailwind CSS watching (recommended for development)
-pnpm dev:full
+# Start development server with Tailwind CSS watching
+pnpm --filter web dev
 ```
 
 ### Custom Tailwind Components
@@ -107,8 +126,9 @@ The project includes several custom Tailwind components:
 - `.card` / `.card-dark` - Card containers for light/dark modes
 - `.lang-button` - Language selection buttons
 - `.language-active` - Active language indicator
+- `.theme-toggle` - Theme toggle button
 
-You can find and modify these styles in `/public/tailwind.css`.
+You can find and modify these styles in the web package.
 
 ## 📡 API Reference
 
@@ -215,16 +235,48 @@ For Portuguese responses, use `Accept-Language: pt-BR`. If not specified, the AP
 
 ```
 kyc-check/
-├── public/             # Static assets
-│   └── index.html      # Main frontend interface
-├── src/
-│   ├── api/            # API endpoints
-│   ├── services/       # Face detection services
-│   ├── types/          # TypeScript type definitions
-│   └── utils/          # Utility functions
-├── uploads/            # Temporary storage for uploaded images
-├── .env                # Environment variables
-└── package.json        # Project dependencies
+├── packages/
+│   ├── api/              # Backend service
+│   │   ├── models/       # Face recognition models
+│   │   └── src/          # API source code
+│   │       ├── api/      # API endpoints
+│   │       ├── services/ # Face detection services
+│   │       ├── types/    # TypeScript definitions
+│   │       └── utils/    # Utility functions
+│   └── web/              # Next.js Frontend
+│       ├── public/       # Static assets
+│       └── src/          # Frontend source code
+│           ├── app/      # Next.js app directory
+│           ├── components/  # React components
+│           ├── contexts/ # React contexts
+│           └── services/ # API service calls
+├── k8s/                  # Kubernetes configurations
+├── Dockerfile            # Docker configuration
+├── pnpm-workspace.yaml   # pnpm workspace configuration
+└── package.json          # Project root dependencies
+```
+
+## 🚢 Deployment
+
+### Docker
+
+Build and run the application using Docker:
+
+```bash
+# Build the Docker image
+docker build -t kyc-check .
+
+# Run the container
+docker run -p 3000:3000 kyc-check
+```
+
+### Kubernetes
+
+Deploy to a Kubernetes cluster using the provided configuration files:
+
+```bash
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
 ```
 
 ## 🙏 Credits
