@@ -7,6 +7,8 @@ import { verifyFileType } from '../utils/fileTypeVerifier';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import Validation from '../models/Validation';
+import crypto from 'crypto';
 
 const router: Router = express.Router();
 
@@ -34,7 +36,13 @@ const saveBufferToTempFile = (buffer: Buffer, extension: string): string => {
   return tempFilePath;
 };
 
-router.post('/',
+// Função para calcular o hash de uma imagem
+function calculateImageHash(filePath: string): string {
+  const fileBuffer = fs.readFileSync(filePath);
+  return crypto.createHash('sha256').update(fileBuffer).digest('hex');
+}
+
+router.post('/validate-faces',
   upload.fields([
     { name: 'image1', maxCount: 1 },
     { name: 'image2', maxCount: 1 }
@@ -99,12 +107,38 @@ router.post('/',
       try {
         const result = await compareFaces(image1Path, image2Path);
 
+        // Salvando os resultados no MongoDB
+        if (result) {
+          // Calcular hashes para as imagens (não armazenamos imagens diretamente)
+          const referenceImageHash = calculateImageHash(image1Path);
+          const selfieImageHash = calculateImageHash(image2Path);
+          
+          const validation = new Validation({
+            isMatch: result.isMatch,
+            similarity: result.similarity,
+            userId: req.body.userId || undefined,
+            userName: req.body.userName || undefined,
+            documentType: req.body.documentType || undefined,
+            imageHashes: {
+              referenceImage: referenceImageHash,
+              selfieImage: selfieImageHash
+            },
+            metadata: {
+              userAgent: req.headers['user-agent'],
+              ipAddress: req.ip,
+              deviceInfo: req.body.deviceInfo
+            }
+          });
+          
+          await validation.save();
+        }
+
         cleanupFiles(tempFiles);
 
-        return res.json({
+        return res.status(200).json({
           success: true,
           data: result
-        } satisfies ValidationResponse);
+        } as ValidationResponse);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
