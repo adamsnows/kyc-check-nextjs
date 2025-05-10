@@ -19,13 +19,13 @@ interface StatsCardProps {
 
 export function StatsCard({ title, metric, metricPrev, delta, deltaType }: StatsCardProps) {
   return (
-    <Card className="mx-auto">
-      <Text>{title}</Text>
-      <Metric>{metric}</Metric>
+    <Card className="mx-auto shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+      <Text className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{title}</Text>
+      <Metric className="mt-2 font-bold">{metric}</Metric>
       {delta && (
-        <Flex className="mt-4">
-          <Text>Comparado com {metricPrev}</Text>
-          <BadgeDelta deltaType={deltaType || 'unchanged'}>{delta}</BadgeDelta>
+        <Flex className="mt-4 items-center">
+          <Text className="text-xs">Comparado com {metricPrev}</Text>
+          <BadgeDelta deltaType={deltaType || 'unchanged'} size="xs">{delta}</BadgeDelta>
         </Flex>
       )}
     </Card>

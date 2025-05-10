@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { inter, montserrat } from './fonts';
-import ThemeProvider from '@/contexts/ThemeContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import './styles.css';
 import './globals.css';
 

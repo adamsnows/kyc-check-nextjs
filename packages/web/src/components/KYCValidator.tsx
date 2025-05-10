@@ -29,7 +29,7 @@ export default function KYCValidator() {
   const [result, setResult] = useState<ValidationResult | null>(null);
   const [currentLang, setCurrentLang] = useState('pt-br');
   const [isMounted, setIsMounted] = useState(false);
-  
+
   // Novos campos para metadados do usuário
   const [userName, setUserName] = useState<string>('');
   const [documentType, setDocumentType] = useState<string>('');

@@ -1,7 +1,15 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import ThemeToggle from '@/components/ThemeToggle';
+import dynamic from 'next/dynamic';
+
+// Importar ThemeToggle dinamicamente para evitar SSR
+const ThemeToggle = dynamic(() => import('@/components/ThemeToggle'), {
+  ssr: false,
+  loading: () => <div className="w-5 h-5"></div>
+});
 
 interface NavItemProps {
   href: string;
@@ -17,7 +25,7 @@ function NavItem({ href, text, active }: NavItemProps) {
   );
 }
 
-export default function Navigation() {
+export default function SafeNavigation() {
   const pathname = usePathname();
 
   return (

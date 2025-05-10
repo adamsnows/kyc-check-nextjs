@@ -17,12 +17,12 @@ router.get('/stats', async (req: Request, res: Response) => {
     // Estatísticas dos últimos 7 dias
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    
+
     const dailyStats = await Validation.aggregate([
       { $match: { createdAt: { $gte: sevenDaysAgo } } },
-      { 
+      {
         $group: {
-          _id: { 
+          _id: {
             $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
           },
           count: { $sum: 1 },

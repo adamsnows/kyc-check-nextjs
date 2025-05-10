@@ -134,7 +134,7 @@ The system uses MongoDB to store validation results and provide dashboard analyt
    ```bash
    # Using local installation
    mongod --dbpath /path/to/data/directory
-   
+
    # Using our Docker Compose
    pnpm db:start
    ```

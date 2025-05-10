@@ -3,16 +3,18 @@
 import React from 'react';
 import Dashboard from '@/components/dashboard/Dashboard';
 import { DashboardProvider } from '@/contexts/DashboardContext';
-import Navigation from '@/components/common/Navigation';
+import SafeNavigation from '@/components/common/SafeNavigation';
 
 export default function DashboardPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <SafeNavigation />
       <div className="container mx-auto px-4">
-        <Navigation />
         <DashboardProvider>
-          <div className="py-8">
-            <Dashboard />
+          <div className="py-6">
+            <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden">
+              <Dashboard />
+            </div>
           </div>
         </DashboardProvider>
       </div>

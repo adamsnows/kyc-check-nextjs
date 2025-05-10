@@ -112,7 +112,7 @@ router.post('/validate-faces',
           // Calcular hashes para as imagens (não armazenamos imagens diretamente)
           const referenceImageHash = calculateImageHash(image1Path);
           const selfieImageHash = calculateImageHash(image2Path);
-          
+
           const validation = new Validation({
             isMatch: result.isMatch,
             similarity: result.similarity,
@@ -129,7 +129,7 @@ router.post('/validate-faces',
               deviceInfo: req.body.deviceInfo
             }
           });
-          
+
           await validation.save();
         }
 

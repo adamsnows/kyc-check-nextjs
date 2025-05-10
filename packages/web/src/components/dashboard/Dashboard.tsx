@@ -34,61 +34,90 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <Card className="mx-auto text-center py-4">
-        <Title className="text-red-500">Erro</Title>
-        <Text className="mt-2">{error}</Text>
-        <Button onClick={handleRefresh} className="mt-4">
-          Tentar novamente
-        </Button>
-      </Card>
+      <div className="p-6">
+        <Card className="mx-auto text-center py-6 border-t-4 border-red-500 shadow-md">
+          <Title className="text-red-500 text-xl">Erro</Title>
+          <Text className="mt-3">{error}</Text>
+          <Button onClick={handleRefresh} className="mt-4" size="sm">
+            Tentar novamente
+          </Button>
+        </Card>
+      </div>
     );
   }
 
   if (loading && !dashboardData) {
     return (
-      <Card className="mx-auto text-center py-10">
-        <Text>Carregando dados do dashboard...</Text>
-      </Card>
+      <div className="p-6">
+        <Card className="mx-auto text-center py-12 shadow-md">
+          <div className="flex items-center justify-center flex-col">
+            <div className="spinner mb-4"></div>
+            <Text>Carregando dados do dashboard...</Text>
+          </div>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <Title>Dashboard KYC</Title>
-        <Button onClick={handleRefresh} loading={loading}>
-          {loading ? 'Atualizando...' : 'Atualizar'}
-        </Button>
+    <div>
+      {/* Header com título e botões de ação */}
+      <div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <Title className="text-2xl font-bold">Dashboard KYC</Title>
+            <Text className="text-gray-500 dark:text-gray-400 mt-1">
+              Visão geral de validações e estatísticas
+            </Text>
+          </div>
+          <Button onClick={handleRefresh} loading={loading} size="sm" color="blue" variant="secondary">
+            {loading ? 'Atualizando...' : 'Atualizar dados'}
+          </Button>
+        </div>
       </div>
 
       {dashboardData ? (
-        <>
-          <DashboardStats
-            totalValidations={dashboardData.totalValidations}
-            matchValidations={dashboardData.matchValidations}
-            notMatchValidations={dashboardData.notMatchValidations}
-            matchRate={dashboardData.matchRate}
-            averageSimilarity={dashboardData.averageSimilarity}
-          />
+        <div className="p-6">
+          <div className="mb-8">
+            <DashboardStats
+              totalValidations={dashboardData.totalValidations}
+              matchValidations={dashboardData.matchValidations}
+              notMatchValidations={dashboardData.notMatchValidations}
+              matchRate={dashboardData.matchRate}
+              averageSimilarity={dashboardData.averageSimilarity}
+            />
+          </div>
 
-          {dashboardData.dailyStats && dashboardData.dailyStats.length > 0 ? (
-            <DashboardCharts dailyStats={dashboardData.dailyStats} />
-          ) : (
-            <Card className="mx-auto text-center py-4 mt-6">
-              <Text>Dados históricos insuficientes para exibir gráficos</Text>
-            </Card>
-          )}
+          <div className="mb-8">
+            <div className="border-b border-gray-200 dark:border-gray-700 pb-2 mb-6">
+              <Title className="text-xl">Gráficos e Tendências</Title>
+            </div>
+            {dashboardData.dailyStats && dashboardData.dailyStats.length > 0 ? (
+              <DashboardCharts dailyStats={dashboardData.dailyStats} />
+            ) : (
+              <Card className="text-center py-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                <Text>Dados históricos insuficientes para exibir gráficos</Text>
+              </Card>
+            )}
+          </div>
 
-          <ValidationHistory
-            validations={validationHistory}
-            pagination={pagination}
-            onPageChange={handlePageChange}
-          />
-        </>
+          <div>
+            <div className="border-b border-gray-200 dark:border-gray-700 pb-2 mb-6">
+              <Title className="text-xl">Histórico de Validações</Title>
+            </div>
+            <ValidationHistory
+              validations={validationHistory}
+              pagination={pagination}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </div>
       ) : (
-        <Card className="mx-auto text-center py-4">
-          <Text>Nenhum dado disponível</Text>
-        </Card>
+        <div className="p-6">
+          <Card className="mx-auto text-center py-8 shadow-sm border border-gray-200 dark:border-gray-700">
+            <Text>Nenhum dado disponível</Text>
+          </Card>
+        </div>
       )}
     </div>
   );

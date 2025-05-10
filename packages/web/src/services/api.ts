@@ -15,15 +15,15 @@ interface UserMetadata {
 
 export const faceValidationService = {
   async validateFaces(
-    referenceImage: File, 
-    selfieImage: File, 
+    referenceImage: File,
+    selfieImage: File,
     metadata?: UserMetadata
   ): Promise<ValidationResult> {
     try {
       const formData = new FormData();
       formData.append('image1', referenceImage);
       formData.append('image2', selfieImage);
-      
+
       // Adicionar metadados se fornecidos
       if (metadata) {
         Object.entries(metadata).forEach(([key, value]) => {

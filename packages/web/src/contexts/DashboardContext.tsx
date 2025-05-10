@@ -69,11 +69,11 @@ export function DashboardProvider({ children }: DashboardProviderProps) {
     setError(null);
     try {
       const response = await fetch(`${API_URL}/api/dashboard/stats`);
-      
+
       if (!response.ok) {
         throw new Error(`Erro ao buscar dados do dashboard: ${response.status}`);
       }
-      
+
       const responseData = await response.json();
       if (responseData.success && responseData.data) {
         setDashboardData(responseData.data);
@@ -93,11 +93,11 @@ export function DashboardProvider({ children }: DashboardProviderProps) {
     setError(null);
     try {
       const response = await fetch(`${API_URL}/api/dashboard/history?page=${page}&limit=${limit}`);
-      
+
       if (!response.ok) {
         throw new Error(`Erro ao buscar histórico de validações: ${response.status}`);
       }
-      
+
       const responseData = await response.json();
       if (responseData.success && responseData.data) {
         setValidationHistory(responseData.data.validations);
