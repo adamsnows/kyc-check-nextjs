@@ -13,7 +13,12 @@
     "start:api": "pnpm --filter @kyc/api start",
     "start:web": "pnpm --filter @kyc/web start",
     "download-models": "pnpm --filter @kyc/api download-models",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build",
+    "docker:restart": "docker-compose restart",
+    "db:start": "docker-compose up -d mongodb"
   },
   "keywords": [
     "face",

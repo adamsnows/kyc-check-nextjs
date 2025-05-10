@@ -13,14 +13,18 @@ You can use documents such as a driver's license to verify if it matches the pho
   - [🚀 Installation](#-installation)
   - [⚙️ Environment Setup](#️-environment-setup)
   - [💻 Usage](#-usage)
+  - [📊 Dashboard](#-dashboard)
+  - [🗃️ MongoDB Setup](#️-mongodb-setup)
+  - [🐳 Docker Compose](#-docker-compose)
   - [🎨 Tailwind CSS](#-tailwind-css)
     - [Custom Tailwind Components](#custom-tailwind-components)
   - [📡 API Reference](#-api-reference)
     - [Face Validation Endpoint](#face-validation-endpoint)
       - [Request Parameters](#request-parameters)
       - [Response Structure](#response-structure)
-      - [Example Response](#example-response)
-    - [API Usage Examples](#api-usage-examples)
+    - [Dashboard Endpoints](#dashboard-endpoints)
+      - [Statistics Endpoint](#statistics-endpoint)
+      - [History Endpoint](#history-endpoint)
   - [🌍 Internationalization](#-internationalization)
     - [User Interface Language](#user-interface-language)
     - [API Language Support](#api-language-support)
@@ -100,6 +104,61 @@ pnpm start
 ```
 
 Access the application at `http://localhost:3000`
+
+## 📊 Dashboard
+
+The KYC-CHECK system now includes a comprehensive dashboard that provides insights and statistics on face validation processes:
+
+- **Statistics Overview:** View total validations, match rates, and average similarities.
+- **Historical Data:** Track validation trends over time with interactive charts.
+- **Detailed History:** Access a paginated list of all previous validations.
+
+To access the dashboard:
+1. Navigate to `/dashboard` in your browser
+2. Ensure MongoDB is running to store and retrieve validation data
+3. The dashboard updates in real-time as new validations are processed
+
+## 🗃️ MongoDB Setup
+
+The system uses MongoDB to store validation results and provide dashboard analytics:
+
+1. **Install MongoDB:**
+   - Local installation: [MongoDB Installation Guide](https://docs.mongodb.com/manual/installation/)
+   - Docker: Use our Docker Compose configuration
+
+2. **Configure Connection:**
+   - Update the `MONGODB_URI` in `/packages/api/.env`
+   - Default connection string: `mongodb://localhost:27017/kyc`
+
+3. **Start MongoDB:**
+   ```bash
+   # Using local installation
+   mongod --dbpath /path/to/data/directory
+   
+   # Using our Docker Compose
+   pnpm db:start
+   ```
+
+## 🐳 Docker Compose
+
+We've included a Docker Compose configuration that sets up the entire system, including MongoDB:
+
+```bash
+# Start all services
+pnpm docker:up
+
+# Stop all services
+pnpm docker:down
+
+# Rebuild containers
+pnpm docker:build
+
+# Restart services
+pnpm docker:restart
+
+# Only start MongoDB
+pnpm db:start
+```
 
 ## 🎨 Tailwind CSS
 
@@ -185,23 +244,81 @@ type ValidationResponse = {
 }
 ```
 
-### API Usage Examples
+### Dashboard Endpoints
 
-**Using cURL:**
-```bash
-# Production
-curl -X POST \
-  https://kyc-check-production.up.railway.app/api/validate-faces \
-  -H 'Content-Type: multipart/form-data' \
-  -F 'image1=@/path/to/first/image.jpg' \
-  -F 'image2=@/path/to/second/image.jpg'
+#### Statistics Endpoint
 
-# Local Development
-curl -X POST \
-  http://localhost:3000/api/validate-faces \
-  -H 'Content-Type: multipart/form-data' \
-  -F 'image1=@/path/to/first/image.jpg' \
-  -F 'image2=@/path/to/second/image.jpg'
+```
+GET /api/dashboard/stats
+```
+
+Returns aggregated statistics on facial validation operations.
+
+**Response Structure:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "totalValidations": 150,
+    "matchValidations": 120,
+    "notMatchValidations": 30,
+    "matchRate": 80,
+    "averageSimilarity": 0.78,
+    "dailyStats": [
+      {
+        "_id": "2023-05-01",
+        "count": 24,
+        "matches": 18,
+        "notMatches": 6,
+        "avgSimilarity": 0.79
+      },
+      // Additional daily stats...
+    ]
+  }
+}
+```
+
+#### History Endpoint
+
+```
+GET /api/dashboard/history?page=1&limit=10
+```
+
+Returns paginated history of validation operations.
+
+**Query Parameters:**
+
+| Parameter | Type   | Default | Description                             |
+|-----------|--------|---------|-----------------------------------------|
+| page      | number | 1       | Page number for pagination              |
+| limit     | number | 10      | Number of records per page              |
+
+**Response Structure:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "validations": [
+      {
+        "_id": "60f9b0f7e6b5f21234567890",
+        "isMatch": true,
+        "similarity": 0.87,
+        "userName": "John Doe",
+        "documentType": "Passport",
+        "createdAt": "2023-05-01T14:22:33.456Z"
+      },
+      // Additional validation records...
+    ],
+    "pagination": {
+      "total": 150,
+      "page": 1,
+      "limit": 10,
+      "pages": 15
+    }
+  }
+}
 ```
 
 ## 🌍 Internationalization

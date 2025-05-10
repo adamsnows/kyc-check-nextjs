@@ -7,12 +7,31 @@ export interface ValidationResult {
   debugInfo?: any;
 }
 
+interface UserMetadata {
+  userName?: string;
+  documentType?: string;
+  [key: string]: any;
+}
+
 export const faceValidationService = {
-  async validateFaces(referenceImage: File, selfieImage: File): Promise<ValidationResult> {
+  async validateFaces(
+    referenceImage: File, 
+    selfieImage: File, 
+    metadata?: UserMetadata
+  ): Promise<ValidationResult> {
     try {
       const formData = new FormData();
       formData.append('image1', referenceImage);
       formData.append('image2', selfieImage);
+      
+      // Adicionar metadados se fornecidos
+      if (metadata) {
+        Object.entries(metadata).forEach(([key, value]) => {
+          if (value) {
+            formData.append(key, value);
+          }
+        });
+      }
 
       const response = await fetch(`${API_URL}/api/validate-faces`, {
         method: 'POST',

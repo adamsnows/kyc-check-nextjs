@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { faceValidationService, ValidationResult } from '@/services/api';
 import { ThemeContext } from '@/contexts/ThemeContext';
 
-// Import our new components
+// Import our components
 import { KYCHeader } from './common/KYCHeader';
 import { ImageUploader } from './common/ImageUploader';
 import { ValidationResult as ValidationResultComponent } from './common/ValidationResult';
@@ -29,7 +29,11 @@ export default function KYCValidator() {
   const [result, setResult] = useState<ValidationResult | null>(null);
   const [currentLang, setCurrentLang] = useState('pt-br');
   const [isMounted, setIsMounted] = useState(false);
-  const [activeTab, setActiveTab] = useState('face');
+  
+  // Novos campos para metadados do usuário
+  const [userName, setUserName] = useState<string>('');
+  const [documentType, setDocumentType] = useState<string>('');
+  const [activeTab, setActiveTab] = useState('upload');
   const themeContext = useContext(ThemeContext);
 
   if (!themeContext) {
@@ -57,15 +61,26 @@ export default function KYCValidator() {
     setImage2(file);
   };
 
-  const compareFaces = async () => {
-    if (!image1 || !image2) return;
+  const handleCompare = async () => {
+    if (!image1 || !image2) {
+      return;
+    }
 
+    setResult(null);
     setLoading(true);
+
     try {
-      const result = await faceValidationService.validateFaces(image1, image2);
+      const result = await faceValidationService.validateFaces(
+        image1,
+        image2,
+        {
+          userName,
+          documentType
+        }
+      );
       setResult(result);
     } catch (error) {
-      console.error("Erro na comparação:", error);
+      console.error('Error during face validation:', error);
       setResult({
         isMatch: false,
         similarity: 0,
@@ -217,8 +232,34 @@ export default function KYCValidator() {
                 />
               </div>
 
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Nome do Usuário
+                </label>
+                <input
+                  type="text"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  placeholder="Digite o nome do usuário"
+                />
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Tipo de Documento
+                </label>
+                <input
+                  type="text"
+                  value={documentType}
+                  onChange={(e) => setDocumentType(e.target.value)}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  placeholder="Digite o tipo de documento"
+                />
+              </div>
+
               <CompareButton
-                onClick={compareFaces}
+                onClick={handleCompare}
                 disabled={!image1 || !image2 || loading}
               />
 
