@@ -33,7 +33,8 @@ export default function KYCValidator() {
   const themeContext = useContext(ThemeContext);
 
   if (!themeContext) {
-    throw new Error('ThemeContext is not provided.');
+    console.warn('ThemeContext is not provided. Falling back to default theme.');
+    return null; // Render nothing or a fallback UI
   }
 
   const { theme } = themeContext;
