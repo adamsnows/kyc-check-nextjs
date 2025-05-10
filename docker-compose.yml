@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: kyc-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=kyc
+    networks:
+      - kyc-network
+
+  api:
+    build:
+      context: ./packages/api
+      dockerfile: Dockerfile
+    container_name: kyc-api
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGODB_URI=mongodb://mongodb:27017/kyc
+      - NODE_ENV=development
+    depends_on:
+      - mongodb
+    volumes:
+      - ./packages/api:/app
+      - /app/node_modules
+    networks:
+      - kyc-network
+
+  web:
+    build:
+      context: ./packages/web
+      dockerfile: Dockerfile
+    container_name: kyc-web
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+    depends_on:
+      - api
+    volumes:
+      - ./packages/web:/app
+      - /app/node_modules
+      - /app/.next
+    networks:
+      - kyc-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  kyc-network:
+    driver: bridge

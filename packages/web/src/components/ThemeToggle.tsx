@@ -4,7 +4,11 @@ import { useTheme } from '../contexts/ThemeContext';
 import { SunIcon, MoonIcon } from './icons/ThemeIcons';
 
 export default function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
   return (
     <button

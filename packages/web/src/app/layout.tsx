@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { inter, montserrat } from './fonts';
-import ThemeProvider from '@/contexts/ThemeContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import './styles.css';
-
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Validador Facial KYC',
@@ -16,9 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${inter.variable} ${montserrat.variable}`} >
-      <body className="min-h-screen font-sans flex items-center justify-center">
+      <body className="min-h-screen font-sans">
         <ThemeProvider>
+          <main className="w-full">
             {children}
+          </main>
         </ThemeProvider>
       </body>
     </html>

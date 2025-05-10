@@ -77,4 +77,4 @@ export function useTheme() {
   return context;
 }
 
-export default ThemeProvider;
+// Remover a exportação padrão, pois já exportamos explicitamente como uma exportação nomeada

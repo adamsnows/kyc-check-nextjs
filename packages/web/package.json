@@ -18,10 +18,13 @@
   "license": "ISC",
   "packageManager": "pnpm@10.8.0",
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@tremor/react": "^3.18.7",
     "framer-motion": "^12.10.1",
     "next": "^15.3.2",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "recharts": "^2.15.3"
   },
   "devDependencies": {
     "@types/react": "19.1.3",
