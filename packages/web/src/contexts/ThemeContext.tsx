@@ -7,7 +7,10 @@ type ThemeContextType = {
   setTheme: (theme: string) => void;
 };
 
-export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextType>({
+  theme: 'dark',
+  setTheme: () => {},
+});
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<string>('dark');
