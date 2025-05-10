@@ -140,7 +140,7 @@ POST /api/validate-faces
 
 #### Request Parameters
 
-| Parameter | Type | Description |
+| Parameter | Types | Description |
 |-----------|------|-------------|
 | image1 | File | First face image |
 | image2 | File | Second face image |
