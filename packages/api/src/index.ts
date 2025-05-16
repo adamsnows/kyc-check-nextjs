@@ -12,12 +12,20 @@ import '@tensorflow/tfjs-node';
 import 'dotenv/config';
 import express from 'express';
 import path from 'path';
+import cors from 'cors';
 import validateFacesRoute from './api/validateFaces';
+import dashboardRoute from './api/dashboard';
 import { loadModels } from './services/modelUtils';
 import * as faceapi from '@vladmandic/face-api';
 import { setupCanvas } from './utils/canvasSetup';
+import { connectToDatabase } from './db/mongodb';
 
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+
+// Conectar ao MongoDB
+connectToDatabase().catch(err => {
+  console.error('Falha ao conectar ao MongoDB:', err);
+});
 
 setupCanvas();
 
@@ -25,17 +33,8 @@ process.env.TF_CPP_MIN_LOG_LEVEL = '2';
 
 const app = express();
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-
-  next();
-});
+// Configurar CORS
+app.use(cors());
 
 app.use(express.json());
 
@@ -43,6 +42,7 @@ app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true, limit: '20mb' }));
 
 app.use('/api/validate-faces', validateFacesRoute);
+app.use('/api/dashboard', dashboardRoute);
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
