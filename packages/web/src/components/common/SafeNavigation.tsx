@@ -25,9 +25,12 @@ function NavItem({ href, text, active }: NavItemProps) {
   );
 }
 
-export default function SafeNavigation() {
-  const pathname = usePathname();
+interface BaseNavigationProps {
+  pathname: string;
+  children?: React.ReactNode;
+}
 
+function BaseNavigation({ pathname, children }: BaseNavigationProps) {
   return (
     <div className="py-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
       <div className="flex space-x-2 items-center">
